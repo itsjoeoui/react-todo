@@ -3,12 +3,16 @@ import PropTypes from "prop-types";
 import Button from "./Button";
 
 // rafce
-const Header = ({ title }) => {
+const Header = ({ title, onAdd, showAddTask }) => {
   return (
     <header>
       <h1 className="header">
         {title}
-        <Button text="Hello!" />
+        <Button
+          color={showAddTask ? "red" : "green"}
+          text={showAddTask ? "Close" : "Add"}
+          onAdd={onAdd}
+        />
       </h1>
     </header>
   );

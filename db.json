@@ -1,0 +1,16 @@
+{
+  "tasks": [
+    {
+      "text": "Grind Leetcode",
+      "day": "Friday",
+      "reminder": true,
+      "id": 1
+    },
+    {
+      "text": "Learn TypeScript",
+      "day": "Saturday",
+      "reminder": false,
+      "id": 2
+    }
+  ]
+}

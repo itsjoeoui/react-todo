@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
 import AddTask from "./components/AddTask";
@@ -6,21 +6,40 @@ import AddTask from "./components/AddTask";
 function App() {
   const [showAddTask, setShowAddTask] = useState(true);
 
-  const [tasks, setTasks] = useState([
-    { id: "1", text: "XDD", day: "Feb 5th at 2:30pm", reminder: false },
-    { id: "2", text: "BRUH", day: "Feb 15th at 4:30pm", reminder: true },
-    { id: "3", text: "HIHIHIHA", day: "Feb 25th at 6:30pm", reminder: false },
-  ]);
+  const [tasks, setTasks] = useState([]);
 
-  const addTask = (task) => {
-    const id =
-      tasks.length !== 0 ? parseInt(tasks[tasks.length - 1].id) + 1 : 1;
-    const newTask = { id, ...task };
-    setTasks([...tasks, newTask]);
-    console.log(`[${id}] Task Added`);
+  useEffect(() => {
+    const getTasks = async () => {
+      const tasksFromServer = await fetchTasks();
+      setTasks(tasksFromServer);
+    };
+
+    getTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    const res = await fetch("http://localhost:2333/tasks");
+    const data = await res.json();
+
+    console.log(data);
+    return data;
   };
 
-  const deleteTask = (id) => {
+  const addTask = async (task) => {
+    const res = await fetch(`http://localhost:2333/tasks/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(task),
+    });
+    const data = await res.json();
+
+    setTasks([...tasks, data]);
+    console.log(`$[data.id] Task Added`);
+  };
+
+  const deleteTask = async (id) => {
+    await fetch(`http://localhost:2333/tasks/${id}`, { method: "DELETE" });
+
     setTasks(tasks.filter((task) => task.id !== id));
     console.log(`[${id}] Task Deleted`);
   };
@@ -31,6 +50,7 @@ function App() {
         task.id === id ? { ...task, reminder: !task.reminder } : task
       )
     );
+
     console.log(`[${id}] Reminder Toggled`);
   };
 
